@@ -1,14 +1,15 @@
 from django.db import models
+from django.db.models import SET_NULL
+from django.utils.timezone import now
 
+from users.models import User
 
 NULLABLE = {"blank": True, "null": True}
-
 frequency_choices = (
     ("Ежедневно", "Ежедневно"),
     ("Еженедельно", "Еженедельно"),
     ("Ежемесячно", "Ежемесячно"),
 )
-
 status_choices = (
     ("Создана", "Создана"),
     ("Запущена", "Запущена"),
@@ -32,6 +33,7 @@ class Client(models.Model):
         help_text="Введите комментарий к клиенту",
         **NULLABLE,
     )
+    owner = models.ForeignKey(User, verbose_name='Пользователь', **NULLABLE, on_delete=SET_NULL)
 
     def __str__(self):
         return f"{self.email} ({self.name})"
@@ -59,7 +61,7 @@ class Newsletter(models.Model):
         choices=status_choices,
     )
     clients = models.ManyToManyField(
-        Client, verbose_name="Клиенты", related_name="clients", blank=True,
+        "Client", verbose_name="Клиенты", related_name="clients", blank=True
     )
     message = models.OneToOneField(
         "Message",
@@ -68,6 +70,8 @@ class Newsletter(models.Model):
         on_delete=models.SET_NULL,
         **NULLABLE,
     )
+    owner = models.ForeignKey(User, verbose_name='Пользователь', **NULLABLE, on_delete=SET_NULL, default=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -75,11 +79,16 @@ class Newsletter(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+        permissions = [('can_block_newsletter', 'Can block newsletter'),
+                       ('can_view_newsletter', 'Can view newsletter'),
+                       ('can_view_user', 'Can view user'),
+                       ('can_block_user', 'Can block user')]
 
 
 class Message(models.Model):
     subject = models.CharField(max_length=100, verbose_name="Тема сообщения")
     text = models.TextField(verbose_name="Текст сообщения")
+    owner = models.ForeignKey(User, verbose_name='Пользователь', **NULLABLE, on_delete=SET_NULL)
 
     def __str__(self):
         return f"{self.subject}: {self.text}"
@@ -90,9 +99,8 @@ class Message(models.Model):
 
 
 class Attempt(models.Model):
-    date = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата и время последней рассылки"
-    )
+    start_date = models.DateTimeField(verbose_name="Дата и время начала рассылки", default=now)
+    end_date = models.DateTimeField(verbose_name="Дата и время окончания рассылки", **NULLABLE)
     mailing_status = models.BooleanField(
         default=False, verbose_name="Успешна ли попытка"
     )
