@@ -5,3 +5,5 @@ pillow==10.4.0
 psycopg2-binary==2.9.9
 redis==5.0.8
 python-dotenv==1.0.1
+django_crontab==0.7.1
+Pillow==10.4.0
