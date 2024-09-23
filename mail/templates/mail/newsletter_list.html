@@ -1,0 +1,46 @@
+{% extends 'mail/base.html' %}
+{% block content %}
+
+<main>
+
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Список Рассылок</h1>
+        <p>
+          <a href="{% url 'mail:newsletter_create' %}" class="btn btn-primary my-2">Создать рассылку</a>
+          <a href="{% url 'mail:message_create' %}" class="btn btn-secondary my-2">Написать сообщение</a>
+        </p>
+      </div>
+    </div>
+  </section>
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for newsletter in object_list %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <p class="card-text">{{ newsletter.name }}</p>
+              <p class="card-text">{{ newsletter.status }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a class="btn btn-primary" href="{% url 'mail:newsletter_detail' newsletter.pk %}" role="button">Посмотреть</a>
+                  <a class="btn btn-primary" href="{% url 'mail:newsletter_update' newsletter.pk %}" role="button">Редактировать</a>
+                  <a class="btn btn-primary" href="{% url 'mail:newsletter_delete' newsletter.pk %}" role="button">Удалить</a>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <a class="btn btn-info" href="#" role="button">Отправить рассылку</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</main>
+
+{% endblock %}
