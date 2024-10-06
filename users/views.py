@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 
-from users.forms import UserRegisterForm, UserForm
+from users.forms import UserRegisterForm, UserForm, UserProfileForm
 from users.models import User
 
 from config.settings import EMAIL_HOST_USER
@@ -67,4 +67,10 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy('users:user_list')
+
+
+class ProfileView(CreateView):
+    model = User
+    form_class = UserProfileForm
+    success_url = reverse_lazy('users:profile')
 
