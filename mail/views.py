@@ -18,35 +18,30 @@ def home(request):
     return render(request, 'home.html', context=context)
 
 
-def get_queryset(self):
-    return get_blog_posts()
-
-
 class NewsletterListView(LoginRequiredMixin, ListView, UserPassesTestMixin):
     model = Newsletter
     template_name = 'newsletter_list.html'
 
-    class NewsletterListView(LoginRequiredMixin, ListView, UserPassesTestMixin):
-        model = Newsletter
-        template_name = 'newsletter_list.html'
+    def get_queryset(self):
+        return get_blog_posts()
 
-        def test_func(self):
-            user = self.request.user
-            # Проверка на суперпользователя
-            if user.is_superuser:
-                return True
-            # Проверка на модератора с правами
-            if user.has_perm('mail.can_view_newsletter'):
-                return True
-            return False
+    def test_func(self):
+        user = self.request.user
+        # Проверка на суперпользователя
+        if user.is_superuser:
+            return True
+        # Проверка на модератора с правами
+        if user.has_perm('mail.can_view_newsletter'):
+            return True
+        return False
 
-        def get_queryset(self):
-            user = self.request.user
-            # Суперпользователь или модератор видят все рассылки
-            if user.is_superuser or user.has_perm('mail.can_view_newsletter'):
-                return Newsletter.objects.all()
-            # Обычный пользователь видит только свои рассылки
-            return Newsletter.objects.filter(owner=user)
+    def get_queryset(self):
+        user = self.request.user
+        # Суперпользователь или модератор видят все рассылки
+        if user.is_superuser or user.has_perm('mail.can_view_newsletter'):
+            return Newsletter.objects.all()
+        # Обычный пользователь видит только свои рассылки
+        return Newsletter.objects.filter(owner=user)
 
     # def test_func(self):
     #     return self.request.user.has_perm('mail.can_view_newsletter')
