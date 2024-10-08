@@ -20,4 +20,4 @@ class UserForm(StyleFormMixin, ModelForm):
 class UserProfileForm(StyleFormMixin, UserChangeForm):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('email', 'phone', 'password', 'country', 'avatar')

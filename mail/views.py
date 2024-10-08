@@ -23,7 +23,14 @@ class NewsletterListView(LoginRequiredMixin, ListView, UserPassesTestMixin):
     template_name = 'newsletter_list.html'
 
     def get_queryset(self):
-        return get_blog_posts()
+        user = self.request.user
+        if user.is_superuser or user.has_perm('mail.can_view_newsletter'):
+            newsletters = Newsletter.objects.all()
+        else:
+            newsletters = Newsletter.objects.filter(owner=user)
+        blog_posts = get_blog_posts()
+        return newsletters | blog_posts
+        # return list(newsletters) + blog_posts
 
     def test_func(self):
         user = self.request.user
@@ -35,13 +42,6 @@ class NewsletterListView(LoginRequiredMixin, ListView, UserPassesTestMixin):
             return True
         return False
 
-    def get_queryset(self):
-        user = self.request.user
-        # Суперпользователь или модератор видят все рассылки
-        if user.is_superuser or user.has_perm('mail.can_view_newsletter'):
-            return Newsletter.objects.all()
-        # Обычный пользователь видит только свои рассылки
-        return Newsletter.objects.filter(owner=user)
 
     # def test_func(self):
     #     return self.request.user.has_perm('mail.can_view_newsletter')
