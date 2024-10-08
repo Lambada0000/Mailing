@@ -2,9 +2,10 @@ from django.urls import reverse_lazy, reverse
 from django.utils.text import slugify
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from blog.models import Blog
+from mail.forms import StyleFormMixin
 
 
-class BlogCreateView(CreateView):
+class BlogCreateView(StyleFormMixin, CreateView):
     model = Blog
     fields = '__all__'
     success_url = reverse_lazy('blog:list')
@@ -17,11 +18,11 @@ class BlogCreateView(CreateView):
         return super().form_valid(form)
 
 
-class BlogListView(ListView):
+class BlogListView(StyleFormMixin, ListView):
     model = Blog
 
 
-class BlogDetailView(DetailView):
+class BlogDetailView(StyleFormMixin, DetailView):
     model = Blog
 
     def get_object(self, queryset=None):
@@ -31,7 +32,7 @@ class BlogDetailView(DetailView):
         return self.object
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(StyleFormMixin, UpdateView):
     model = Blog
     fields = '__all__'
     success_url = reverse_lazy('blog:list')
@@ -40,6 +41,6 @@ class BlogUpdateView(UpdateView):
         return reverse('blog:blog_detail', args=[self.kwargs.get('pk')])
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(StyleFormMixin, DeleteView):
     model = Blog
     success_url = reverse_lazy('blog:list')
