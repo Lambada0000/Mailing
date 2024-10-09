@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from mail.forms import NewsletterForm, MessageForm, ClientForm, NewsletterModeratorForm
-from mail.models import Newsletter, Message, Client
+from mail.models import Newsletter, Message, Client, Attempt
 from mail.services import get_three_articles, get_blog_posts
 
 
@@ -158,3 +158,9 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
 class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     success_url = reverse_lazy('mail:client_list')
+
+
+class AttemptListView(ListView):
+    model = Attempt
+    template_name = 'mail/attempt_list.html'
+    context_object_name = 'attempts'

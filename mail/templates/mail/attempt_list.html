@@ -1,0 +1,27 @@
+{% extends 'mail/base.html' %}
+
+{% block content %}
+    <h1>Логи попыток рассылки</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Статус</th>
+                <th>Ответ сервера</th>
+                <th>Рассылка</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attempt in attempts %}
+            <tr>
+                <td>{{ attempt.start_date }}</td>
+                <td>{{ attempt.end_date }}</td>
+                <td>{{ attempt.mailing_status|yesno:"Успешно,Неудачно" }}</td>
+                <td>{{ attempt.server_response }}</td>
+                <td>{{ attempt.newsletter }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
